@@ -18,7 +18,7 @@ const TOKEN_PATH = join(PROJECT_ROOT, ".yazio-token.json");
 function loadCachedToken(): Token | null {
   try {
     const data = JSON.parse(readFileSync(TOKEN_PATH, "utf-8"));
-    if (data.expires_at && Date.now() / 1000 < data.expires_at - 60) {
+    if (data.expires_at && Date.now() < data.expires_at - 60_000) {
       return data;
     }
   } catch {}
@@ -47,7 +47,7 @@ export function getClient(): Yazio {
       access_token: accessToken,
       refresh_token: refreshToken ?? "",
       expires_in: 3600,
-      expires_at: Math.floor(Date.now() / 1000) + 3600,
+      expires_at: Date.now() + 3600_000,
     };
 
     clientInstance = new Yazio({
@@ -96,7 +96,7 @@ export async function getYazioToken(): Promise<Token> {
         access_token: accessToken,
         refresh_token: refreshToken ?? "",
         expires_in: 3600,
-        expires_at: Math.floor(Date.now() / 1000) + 3600,
+        expires_at: Date.now() + 3600_000,
       };
       authInstance = new YazioAuth({
         token,
